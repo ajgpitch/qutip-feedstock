@@ -1,50 +1,48 @@
-{% set version = "4.1.0" %}
+{% set version = "4.5.2" %}
 
 package:
     name: qutip
     version: {{ version }}
 
 source:
-    fn: qutip-{{ version }}.tar.gz
-    url: http://qutip.org/downloads/{{ version }}/qutip-{{ version }}.tar.gz
-    sha256: b41963d33662121d3f996c5c4f8f28a63c5253d5ffb3f4e1a4e88d84e213b006
+    url: https://github.com/qutip/qutip/archive/v{{ version }}.tar.gz
+    sha256: f601f1204201c9c78bc333ed4942feac1d6f57af5631d4afd509ad4be547a81f
 
 build:
     number: 1
-    script: $PYTHON setup.py install  # [unix]
-    # ajgpitch 2017-03-16: win py27 build currently failing due to error on import scipy.misc
-    # Trying again on a new build
-    # skip: True                        # [win and py2k]
+    script: "{{ PYTHON }} -m pip install . --no-deps -vv"  # [not win]
+    skip: True                        # [py2k]
 
 requirements:
   build:
+    - {{ compiler('cxx') }}
+  host:
     - python
-    - setuptools
-    - numpy x.x
+    - pip
+    - numpy {{ numpy }}
     - cython >=0.21
-    - scipy >=0.15
-    - mingwpy                         # [win and py2k]
-    - toolchain
-    
+    - scipy >=1.0
   run:
     - python
     - setuptools
-    - numpy x.x
-    - scipy >=0.15
-    - cython >=0.21
-    - mingwpy                         # [win and py2k]
-    
+    - {{ pin_compatible('numpy') }}
+    - scipy >=1.0
+
 test:
   imports:
     - qutip
 
 about:
     home: http://qutip.org
-    license: BSD 3-clause
+    license: BSD-3-Clause
+    license_file: LICENSE.txt
     summary: 'QuTiP is open-source software for simulating the dynamics of open quantum systems and optimal quantum control'
 
 extra:
   recipe-maintainers:
     - ajgpitch
-    - sahmed95
+    - quantshah
+    - nathanshammah
     - nonhermitian
+    - ericgig
+    - nathanshammah
